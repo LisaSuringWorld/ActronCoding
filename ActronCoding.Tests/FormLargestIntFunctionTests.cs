@@ -29,11 +29,23 @@ namespace ActronCoding.Tests
 
             // Act
             var response = FormLargestIntFunction.Run(request, logger);
-            var result = (OkObjectResult)response;
+
+            // Log response content for debugging
+            /*var responseContent = response != null ? response.Value?.ToString() : "Response is null";
+            logger.LogInformation("Response content: " + responseContent);*/
+
+            //var result = (OkObjectResult)response;
+            var result = response as JsonResult;
 
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
+    
+            // Parse the response content
+            var responseContent = JsonConvert.DeserializeObject<ResponseModel>(result.Value.ToString());
+
+            Assert.IsNotNull(responseContent);
+            Assert.AreEqual("99907822310", responseContent.output);
         }
 
         [Test]
@@ -50,12 +62,19 @@ namespace ActronCoding.Tests
 
             // Act
             var response = FormLargestIntFunction.Run(request, logger);
-            var result = (BadRequestObjectResult)response;
+            var result = response as BadRequestObjectResult;
 
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(StatusCodes.Status400BadRequest, result.StatusCode);
+            Assert.AreEqual("Invalid input array [non positive integers or empty array]", result.Value);
         }
+    }
+
+   
+    public class ResponseModel
+    {
+        public string output { get; set; }
     }
 
     // Helper class to create a logger

@@ -74,7 +74,21 @@ namespace ActronCoding
             });
 
             var largestInt = string.Join("", input.Input);
-            return new OkObjectResult(new { output = largestInt });
+            //return new OkObjectResult(new { output = largestInt });
+            /*return new JsonResult(new { output = largestInt })
+            {
+                StatusCode = 200,
+                ContentType = "application/json"
+            };*/
+
+            // Return JSON response
+            var jsonResponse = JsonConvert.SerializeObject(new { output = largestInt });
+            return new JsonResult(jsonResponse)
+            {
+                //Value = jsonResponse,
+                ContentType = "application/json",
+                StatusCode = 200
+            };
         }
     }
 
